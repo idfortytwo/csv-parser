@@ -66,8 +66,46 @@ void CSVReader::sort(int field, bool ascending) {
         std::sort(this->records.begin(), this->records.end(), this->compareWrapperDesc(field));
 }
 
-void CSVReader::print() {
+
+void CSVReader::filter(int field, Operation operation, const string& value) {
+    vector<vector<string>> filtered;
+
+    cout << operation << endl;
     for (const auto& record : records) {
+        switch (operation) {
+            case less:
+                cout << record[field] << " " << value << endl;
+                if (record[field] < value)
+                    filtered.push_back(record);
+                break;
+
+            case lessEqual:
+                if (record[field] <= value)
+                    filtered.push_back(record);
+                break;
+
+            case equal:
+                if (record[field] == value)
+                    filtered.push_back(record);
+                break;
+
+            case greater:
+                if (record[field] >= value)
+                    filtered.push_back(record);
+                break;
+
+            case greaterEqual:
+                if (record[field] > value)
+                    filtered.push_back(record);
+                break;
+        }
+    }
+
+    print(filtered);
+}
+
+void CSVReader::print() {
+    for (const auto& record : this->records) {
         for (const auto& field : record) {
             cout << field << " ";
         }
@@ -75,3 +113,15 @@ void CSVReader::print() {
     }
     cout << endl;
 }
+
+void CSVReader::print(const vector<vector<string>> &_records) {
+    cout << _records.size() << endl;
+    for (const auto& record : _records) {
+        for (const auto& field : record) {
+            cout << field << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+

@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-#include "Records.hpp"
 
 using namespace std;
 
@@ -9,7 +8,6 @@ using namespace std;
 
 class CSVReader {
     vector<vector<string>> records;
-
     static vector<vector<string>> fileToRecords(ifstream *file);
     static vector<string> lineToFields(const string& line, char delimiter);
 
@@ -21,7 +19,17 @@ public:
 
     void sort(int field, bool asc=true);
 
+    enum Operation {
+        less,
+        lessEqual,
+        equal,
+        greater,
+        greaterEqual
+    };
+    void filter(int field, Operation operation, const string& value);
+
     void print();
+    static void print(const vector<vector<string>> &_records);
 };
 
 #endif  // CSV_HPP
