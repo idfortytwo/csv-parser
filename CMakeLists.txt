@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(test include src)
 
-add_executable(CSVParser test/main.cpp src/CSVReader.cpp)
+add_executable(CSVParser test/main.cpp src/CSVParser.cpp)
