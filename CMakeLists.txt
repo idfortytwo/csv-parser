@@ -3,4 +3,6 @@ project(CSVParser)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(CSVParser src/main.cpp)
+include_directories(test include src)
+
+add_executable(CSVParser test/main.cpp src/CSVReader.cpp)
