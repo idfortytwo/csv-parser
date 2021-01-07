@@ -32,9 +32,10 @@ vector<vector<string>> CSVParser::fileToRecords(ifstream *file) {
 
         if (!getline(*file, line))
             break;
-
-        fields = lineToFields(line);
-        fileRecords.push_back(fields);
+        if (!line.empty()) {
+            fields = lineToFields(line);
+            fileRecords.push_back(fields);
+        }
     }
 
     return fileRecords;
