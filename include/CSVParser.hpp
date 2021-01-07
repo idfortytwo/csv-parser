@@ -8,13 +8,12 @@ using namespace std;
 
 class CSVParser {
 public:
-    CSVParser(const string& filename, char delimiter);
-
-    void readFile(bool hasHeader=false);
+    void readFile(const string& filename, char delimiter, bool hasHeader=false);
     void readHeaders(ifstream *file);
 
-    bool hasHeaders();
+    vector<string> getRecord(int index);
     vector<string> getHeaders();
+    int getFieldCount();
 
     void sort(int keyField, bool reverse=false);
 
@@ -22,6 +21,7 @@ public:
         filterLess,
         filterLessEqual,
         filterEqual,
+        filterNotEqual,
         filterGreaterEqual,
         filterGreater
     };
@@ -32,24 +32,25 @@ public:
         typeDate
     };
 
-    void filter(int field, Condition operation, const string& filterValue);
+    void filter(int field, int filter, const string& filterValue);
 
     void print();
-    static void print(const vector<vector<string>> &_records);
+    vector<int> fieldTypes;
+
+    void save(const string& outFilename, bool saveHeaders);
 
 private:
-    string inputFilename;
     char delimiter;
 
-    bool hasHeader;
+    bool hasHeaders;
+
     vector<string> headers;
     vector<vector<string>> records;
-    vector<int> fieldTypes;
 
     vector<vector<string>> fileToRecords(ifstream *file);
     vector<string> lineToFields(const string& line);
 
-    template <typename T> bool filterConverted(T a, T b, Condition cond);
+    template <typename T> bool filterConverted(T a, T b, int filter);
 
     static auto compareWrapperAsc(int &field, int &fieldType);
     static auto compareWrapperDesc(int &field, int &fieldType);

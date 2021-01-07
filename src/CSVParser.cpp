@@ -1,9 +1,8 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "readability-make-member-function-const"
 #include <sstream>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+
 #include <CSVParser.hpp>
 
 using namespace std;
@@ -42,37 +41,39 @@ vector<vector<string>> CSVParser::fileToRecords(ifstream *file) {
 }
 
 
-CSVParser::CSVParser(const string& filename, char delimiter) {
-    this->inputFilename = filename;
-    this->delimiter = delimiter;
-}
-
 void CSVParser::readHeaders(ifstream *file) {
     string line;
     getline(*file, line);
     this->headers = lineToFields(line);
 }
 
-bool CSVParser::hasHeaders() {
-    return this->hasHeader;
+vector<string> CSVParser::getRecord(int index) {
+    if (index < 0 && index >= this->getFieldCount()) {
+        string errorMsg = "invalid record index: ";
+        errorMsg += to_string(index);
+        errorMsg += "\n";
+        throw out_of_range(errorMsg);
+    }
+
+    return this->records[index];
 }
 
 vector<string> CSVParser::getHeaders() {
     return this->headers;
 }
 
-void CSVParser::readFile(bool hasHeaders) {
+int CSVParser::getFieldCount() {
+    return this->records[0].size();
+}
+
+void CSVParser::readFile(const string& filename, char fileDelimiter, bool fileHasHeader) {
     ifstream file;
-    file.open(this->inputFilename);
+    file.open(filename);
 
-    if (hasHeaders) {
+    this->delimiter = fileDelimiter;
+    this->hasHeaders = fileHasHeader;
+    if (fileHasHeader)
         readHeaders(&file);
-        this->hasHeader = true;
-    }
-
-    this->fieldTypes.emplace_back(this->typeString);
-    this->fieldTypes.emplace_back(this->typeNumber);
-    this->fieldTypes.emplace_back(this->typeNumber);
 
     this->records = fileToRecords(&file);
 
@@ -124,7 +125,7 @@ void CSVParser::sort(int keyField, bool reverse) {
 }
 
 
-void CSVParser::filter(int field, Condition filter, const string& filterValue) {
+void CSVParser::filter(int field, int filter, const string& filterValue) {
     vector<vector<string>> filtered;
 
     int fieldType = this->fieldTypes[field];
@@ -155,8 +156,8 @@ void CSVParser::filter(int field, Condition filter, const string& filterValue) {
 }
 
 template <typename T>
-bool CSVParser::filterConverted(T a, T b, Condition condition) {
-    switch (condition) {
+bool CSVParser::filterConverted(T a, T b, int filter) {
+    switch (filter) {
         case filterLess:
             return a < b;
 
@@ -166,11 +167,20 @@ bool CSVParser::filterConverted(T a, T b, Condition condition) {
         case filterEqual:
             return a == b;
 
+        case filterNotEqual:
+            return a != b;
+
         case filterGreaterEqual:
             return a >= b;
 
         case filterGreater:
             return a > b;
+
+        default:
+            string errorMsg = "unexpected filterConverted filter argument: \"";
+            errorMsg += to_string(filter);
+            errorMsg += "\"\n";
+            throw runtime_error(errorMsg);
     }
 }
 
@@ -181,16 +191,35 @@ void CSVParser::print() {
         }
         cout << endl;
     }
-    cout << endl;
 }
 
-void CSVParser::print(const vector<vector<string>> &_records) {
-    cout << _records.size() << endl;
-    for (const auto& record : _records) {
-        for (const auto& field : record) {
-            cout << field << " ";
+void CSVParser::save(const string& outFilename, bool saveHeaders=false) {
+    ofstream outFile;
+
+    outFile.open(outFilename);
+    if (outFile.is_open()) {
+        if (saveHeaders && this->hasHeaders) {
+            for (const auto &header : this->headers) {
+                outFile << header << this->delimiter;
+            }
+            outFile.seekp(-1, ios_base::cur);
+            outFile << endl;
         }
-        cout << endl;
+
+        for (const auto& record : this->records) {
+            for (const auto &field : record) {
+                outFile << field << this->delimiter;
+            }
+            outFile.seekp(-1, ios_base::cur);
+            outFile << endl;
+        }
+        outFile << endl;
+
+        cout << "saved to " << outFilename << endl;
+        outFile.close();
+    } else {
+        string errorMsg = "unexpected error occured while writing to ";
+        errorMsg += outFilename;
+        throw runtime_error(errorMsg);
     }
-    cout << endl;
 }

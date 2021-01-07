@@ -1,16 +1,14 @@
 #include <iostream>
-#include <CSVReader.hpp>
+#include <InputManager.hpp>
 
 using namespace std;
 
 
-
 int main() {
-    string filename = "test.csv";
+    InputManager manager = InputManager();
+    manager.loadFile();
 
-    CSVReader csv = CSVReader(filename);
-    csv.print();
-    csv.sort(2, false);
-
-    return 0;
+    while (true) {
+        manager.askNext();
+    }
 }
