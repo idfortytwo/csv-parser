@@ -6,9 +6,22 @@ using namespace std;
 
 int main() {
     InputManager manager = InputManager();
-    manager.loadFile();
+    bool fileLoaded = false;
+
+    while (!fileLoaded) {
+        try {
+            manager.loadFile();
+            fileLoaded = true;
+        } catch (exception &e) {
+            cout << e.what() << endl;
+        }
+    }
 
     while (true) {
-        manager.askNext();
+        try {
+            manager.askNext();
+        } catch (exception &e) {
+            cout << e.what() << endl;
+        }
     }
 }
