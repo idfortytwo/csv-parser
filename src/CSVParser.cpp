@@ -210,7 +210,15 @@ bool CSVParser::filterConverted(T a, T b, int filter) {
 }
 
 void CSVParser::updateMaxFieldLengths() {
-    for (auto &record : this->records) {
+    if (this->hasHeaders) {
+        for (int i = 0; i < this->fieldCount; i++) {
+            int length = headers[i].length();
+            if (this->fieldMaxLengths[i] < length)
+                this->fieldMaxLengths[i] = length;
+        }
+    }
+
+    for (const auto& record : this->records) {
         for (int i = 0; i < this->fieldCount; i++) {
             int length = record[i].length();
             if (this->fieldMaxLengths[i] < length)
@@ -225,11 +233,19 @@ void CSVParser::print() {
     if (this->dataChanged)
         updateMaxFieldLengths();
 
+    if (this->hasHeaders) {
+        for (int i = 0; i < this->fieldCount; i++) {
+            string header = this->headers[i];
+            int maxLength = this->fieldMaxLengths[i];
+            cout << left << setw(maxLength) << header << " ";
+        }
+        cout << endl;
+    }
+
     for (const auto& record : this->records) {
         for (int i = 0; i < this->fieldCount; i++) {
             string field = record[i];
             int maxLength = this->fieldMaxLengths[i];
-
             cout << left << setw(maxLength) << field << " ";
         }
         cout << endl;
@@ -242,7 +258,7 @@ void CSVParser::save(const string& outFilename, bool saveHeaders=false) {
     outFile.open(outFilename);
     if (outFile.is_open()) {
         if (saveHeaders && this->hasHeaders) {
-            for (const auto &header : this->headers) {
+            for (const auto& header : this->headers) {
                 outFile << header << this->delimiter;
             }
             outFile.seekp(-1, ios_base::cur);
@@ -260,6 +276,7 @@ void CSVParser::save(const string& outFilename, bool saveHeaders=false) {
 
         cout << "saved to " << outFilename << endl;
         outFile.close();
+
     } else {
         string errorMsg = "unexpected error occured while writing to ";
         errorMsg += outFilename;
