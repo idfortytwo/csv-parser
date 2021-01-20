@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <iomanip>
 
 #include <CSVParser.hpp>
 
@@ -87,9 +88,12 @@ void CSVParser::readFile(const string& filename, char fileDelimiter, bool fileHa
         readHeaders(&file);
 
     this->records = fileToRecords(&file);
-    this->fieldCount = getFieldCount();
 
     file.close();
+
+    this->fieldCount = getFieldCount();
+    for (int i = 0; i < this->fieldCount; i++)
+        this->fieldMaxLengths.push_back(0);
 }
 
 auto CSVParser::compareWrapperAsc(int &field, int &fieldType) {
@@ -131,14 +135,19 @@ auto CSVParser::compareWrapperDesc(int &field, int &fieldType) {
 void CSVParser::sort(int keyField, bool reverse) {
     int fieldType = this->fieldTypes[keyField];
     if (reverse)
-        std::sort(this->records.begin(), this->records.end(), this->compareWrapperDesc(keyField, fieldType));
+        std::sort(this->records.begin(), this->records.end(),
+                  this->compareWrapperDesc(keyField, fieldType));
     else
-        std::sort(this->records.begin(), this->records.end(), this->compareWrapperAsc(keyField, fieldType));
+        std::sort(this->records.begin(), this->records.end(),
+                  this->compareWrapperAsc(keyField, fieldType));
 }
 
 
 void CSVParser::filter(int field, int filter, const string& filterValue) {
     vector<vector<string>> filtered;
+
+    for (int i = 0; i < this->fieldCount; i++)
+        this->fieldMaxLengths[i] = 0;
 
     int fieldType = this->fieldTypes[field];
     for (const auto& record : this->records) {
@@ -197,10 +206,28 @@ bool CSVParser::filterConverted(T a, T b, int filter) {
     }
 }
 
+void CSVParser::updateMaxFieldLengths() {
+    for (auto &record : this->records) {
+        for (int i = 0; i < this->fieldCount; i++) {
+            int length = record[i].length();
+            if (this->fieldMaxLengths[i] < length)
+                this->fieldMaxLengths[i] = length;
+        }
+    }
+
+//    this->dataChanged = false;
+}
+
 void CSVParser::print() {
+    if (this->dataChanged)
+        updateMaxFieldLengths();
+
     for (const auto& record : this->records) {
-        for (const auto& field : record) {
-            cout << field << " ";
+        for (int i = 0; i < this->fieldCount; i++) {
+            string field = record[i];
+            int maxLength = this->fieldMaxLengths[i];
+
+            cout << left << setw(maxLength) << field << " ";
         }
         cout << endl;
     }

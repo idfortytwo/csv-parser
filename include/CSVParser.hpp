@@ -32,6 +32,7 @@ public:
 
     void sort(int keyField, bool reverse=false);
     void filter(int field, int filter, const string& filterValue);
+    void updateMaxFieldLengths();
     void print();
     void save(const string& outFilename, bool saveHeaders);
 
@@ -42,6 +43,9 @@ private:
     vector<string> headers;
     vector<vector<string>> records;
     int fieldCount;
+
+    bool dataChanged = true;
+    vector<int> fieldMaxLengths;
 
     vector<vector<string>> fileToRecords(ifstream *file);
     vector<string> lineToFields(const string& line);
