@@ -140,6 +140,8 @@ void CSVParser::sort(int keyField, bool reverse) {
     else
         std::sort(this->records.begin(), this->records.end(),
                   this->compareWrapperAsc(keyField, fieldType));
+
+    this->dataChanged = true;
 }
 
 
@@ -173,8 +175,9 @@ void CSVParser::filter(int field, int filter, const string& filterValue) {
         }
     }
 
-//    print(filtered);
     this->records = filtered;
+
+    this->dataChanged = true;
 }
 
 template <typename T>
@@ -215,7 +218,7 @@ void CSVParser::updateMaxFieldLengths() {
         }
     }
 
-//    this->dataChanged = false;
+    this->dataChanged = false;
 }
 
 void CSVParser::print() {
