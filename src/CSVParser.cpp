@@ -1,4 +1,3 @@
-#include <sstream>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
@@ -125,9 +124,6 @@ auto CSVParser::compareWrapperAsc(int &field, int &fieldType) {
 
                 return aNum < bNum;
 
-            case typeDate:
-                return a[field] < b[field];
-
             default:
                 throw runtime_error("sorting compare function got unexpected field type\n");
         }
@@ -162,9 +158,6 @@ auto CSVParser::compareWrapperDesc(int &field, int &fieldType) {
                 }
 
                 return aNum > bNum;
-
-            case typeDate:
-                return a[field] > b[field];
 
             default:
                 throw runtime_error("sorting compare function got unexpected field type\n");
@@ -224,11 +217,6 @@ void CSVParser::filter(int field, int filter, const string& filterValue) {
                 if (filterConverted(convertedField, convertedFilter, filter))
                     filtered.push_back(record);
 
-                break;
-
-            case typeDate:
-                if (filterConverted(fieldValue, filterValue, filter))
-                    filtered.push_back(record);
                 break;
 
             default:

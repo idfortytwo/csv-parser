@@ -26,8 +26,7 @@ public:
     };
     enum FieldType {
         typeString,
-        typeNumber,
-        typeDate
+        typeNumber
     };
 
     void sort(int keyField, bool reverse=false);

@@ -57,7 +57,6 @@ void InputManager::askTypes() {
     cout << "data types:" << endl;
     cout << "string" << endl;
     cout << "number" << endl;
-    cout << "date" << endl << endl;
 
     if (this->fileHasHeader)
         values = this->parser.getHeaders();
@@ -81,8 +80,6 @@ void InputManager::askTypes() {
             type = this->parser.typeString;
         } else if (input == "number") {
             type = this->parser.typeNumber;
-        } else if (input == "date") {
-            type = this->parser.typeDate;
         } else {
             string errorMsg = "recieved: \"";
             errorMsg += input;
