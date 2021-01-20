@@ -13,9 +13,8 @@ public:
 
     vector<string> getRecord(int index);
     vector<string> getHeaders();
+    vector<int> fieldTypes;
     int getFieldCount();
-
-    void sort(int keyField, bool reverse=false);
 
     enum Condition {
         filterLess,
@@ -25,23 +24,19 @@ public:
         filterGreaterEqual,
         filterGreater
     };
-
     enum FieldType {
         typeString,
         typeNumber,
         typeDate
     };
 
+    void sort(int keyField, bool reverse=false);
     void filter(int field, int filter, const string& filterValue);
-
     void print();
-    vector<int> fieldTypes;
-
     void save(const string& outFilename, bool saveHeaders);
 
 private:
     char delimiter;
-
     bool hasHeaders;
 
     vector<string> headers;
