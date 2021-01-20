@@ -49,7 +49,7 @@ void CSVParser::readHeaders(ifstream *file) {
 }
 
 vector<string> CSVParser::getRecord(int index) {
-    if (index < 0 && index >= this->getFieldCount()) {
+    if (index < 0 && index >= this->fieldCount) {
         string errorMsg = "invalid record index: ";
         errorMsg += to_string(index);
         errorMsg += "\n";
@@ -64,7 +64,10 @@ vector<string> CSVParser::getHeaders() {
 }
 
 int CSVParser::getFieldCount() {
-    return this->records[0].size();
+    if (this->records.empty())
+        return 0;
+    else
+        return this->records[0].size();
 }
 
 void CSVParser::readFile(const string& filename, char fileDelimiter, bool fileHasHeader) {
@@ -84,6 +87,7 @@ void CSVParser::readFile(const string& filename, char fileDelimiter, bool fileHa
         readHeaders(&file);
 
     this->records = fileToRecords(&file);
+    this->fieldCount = getFieldCount();
 
     file.close();
 }

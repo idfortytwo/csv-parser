@@ -41,6 +41,7 @@ private:
 
     vector<string> headers;
     vector<vector<string>> records;
+    int fieldCount;
 
     vector<vector<string>> fileToRecords(ifstream *file);
     vector<string> lineToFields(const string& line);
