@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <sys/stat.h>
 
 #include <InputManager.hpp>
 
@@ -15,6 +16,7 @@ void InputManager::loadFile() {
     cout << "provide filename:" << endl;
     cout << ">";
     cin >> filename;
+    checkIfFileExists(filename);
 
     cout << "does it have headers?" << endl;
     hasHeader = yesNo();
@@ -36,6 +38,16 @@ void InputManager::loadFile() {
     this->parser.readFile(filename, delimiter, hasHeader);
 
     askTypes();
+}
+
+
+void InputManager::checkIfFileExists(const string& path) {
+    if (access(path.c_str(), F_OK) == -1) {
+        string errorMsg = "file \"";
+        errorMsg += path;
+        errorMsg += "\" not found\n";
+        throw invalid_argument(errorMsg);
+    }
 }
 
 void InputManager::askTypes() {

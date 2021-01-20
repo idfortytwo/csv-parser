@@ -69,7 +69,14 @@ int CSVParser::getFieldCount() {
 
 void CSVParser::readFile(const string& filename, char fileDelimiter, bool fileHasHeader) {
     ifstream file;
+
     file.open(filename);
+    if (!file) {
+        string errorMsg = "failed to open file \"";
+        errorMsg += filename;
+        errorMsg += "\"\n";
+        throw invalid_argument(errorMsg);
+    }
 
     this->delimiter = fileDelimiter;
     this->hasHeaders = fileHasHeader;

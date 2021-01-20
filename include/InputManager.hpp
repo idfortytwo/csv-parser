@@ -11,6 +11,7 @@ class InputManager {
     CSVParser parser;
     bool fileHasHeader=false;
 
+    static void checkIfFileExists(const string& path);
     void printFieldOptions();
     int getFieldNumber();
     static bool yesNo();
