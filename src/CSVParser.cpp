@@ -141,20 +141,21 @@ void CSVParser::filter(int field, int filter, const string& filterValue) {
     vector<vector<string>> filtered;
 
     int fieldType = this->fieldTypes[field];
-    for (const auto& record : records) {
+    for (const auto& record : this->records) {
+        string fieldValue = record[field];
         switch (fieldType) {
             case typeString:
-                if (filterConverted(record[field], filterValue, filter))
+                if (filterConverted(fieldValue, filterValue, filter))
                     filtered.push_back(record);
                 break;
 
             case typeNumber:
-                if (filterConverted(stod(record[field]), stod(filterValue), filter))
+                if (filterConverted(stod(fieldValue), stod(filterValue), filter))
                     filtered.push_back(record);
                 break;
 
             case typeDate:
-                if (filterConverted(record[field], filterValue, filter))
+                if (filterConverted(fieldValue, filterValue, filter))
                     filtered.push_back(record);
                 break;
 
