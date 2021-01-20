@@ -103,7 +103,27 @@ auto CSVParser::compareWrapperAsc(int &field, int &fieldType) {
                 return a[field] < b[field];
 
             case typeNumber:
-                return stod(a[field]) < stod(b[field]);
+                double aNum, bNum;
+
+                try {
+                    aNum = stod(a[field]);
+                } catch (exception &e) {
+                    string errorMsg = "convertion error for value \"";
+                    errorMsg += a[field];
+                    errorMsg += "\"\n";
+                    throw invalid_argument(errorMsg);
+                }
+
+                try {
+                    bNum = stod(b[field]);
+                } catch (exception &e) {
+                    string errorMsg = "convertion error for value \"";
+                    errorMsg += b[field];
+                    errorMsg += "\"\n";
+                    throw invalid_argument(errorMsg);
+                }
+
+                return aNum < bNum;
 
             case typeDate:
                 return a[field] < b[field];
@@ -121,7 +141,27 @@ auto CSVParser::compareWrapperDesc(int &field, int &fieldType) {
                 return a[field] > b[field];
 
             case typeNumber:
-                return stod(a[field]) > stod(b[field]);
+                double aNum, bNum;
+
+                try {
+                    aNum = stod(a[field]);
+                } catch (exception &e) {
+                    string errorMsg = "convertion error for value \"";
+                    errorMsg += a[field];
+                    errorMsg += "\"\n";
+                    throw invalid_argument(errorMsg);
+                }
+
+                try {
+                    bNum = stod(b[field]);
+                } catch (exception &e) {
+                    string errorMsg = "convertion error for value \"";
+                    errorMsg += b[field];
+                    errorMsg += "\"\n";
+                    throw invalid_argument(errorMsg);
+                }
+
+                return aNum > bNum;
 
             case typeDate:
                 return a[field] > b[field];
@@ -161,8 +201,29 @@ void CSVParser::filter(int field, int filter, const string& filterValue) {
                 break;
 
             case typeNumber:
-                if (filterConverted(stod(fieldValue), stod(filterValue), filter))
+                double convertedField, convertedFilter;
+
+                try {
+                    convertedField = stod(fieldValue);
+                } catch (exception &e) {
+                    string errorMsg = "convertion error for value \"";
+                    errorMsg += fieldValue;
+                    errorMsg += "\"\n";
+                    throw invalid_argument(errorMsg);
+                }
+
+                try {
+                    convertedFilter = stod(filterValue);
+                } catch (exception &e) {
+                    string errorMsg = "convertion error for value \"";
+                    errorMsg += filterValue;
+                    errorMsg += "\"\n";
+                    throw invalid_argument(errorMsg);
+                }
+
+                if (filterConverted(convertedField, convertedFilter, filter))
                     filtered.push_back(record);
+
                 break;
 
             case typeDate:

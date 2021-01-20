@@ -21,7 +21,7 @@ int main() {
         try {
             manager.askNext();
         } catch (exception &e) {
-            cout << e.what() << endl;
+            cout << "ERROR: " << e.what() << endl;
         }
     }
 }
